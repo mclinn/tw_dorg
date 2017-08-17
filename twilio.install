@@ -9,7 +9,7 @@
  */
 function twilio_install() {
   $t = get_t();
-  drupal_set_message($t("Twilio module settings are available under !link",
+  backdrop_set_message($t("Twilio module settings are available under !link",
     array( '!link' => l($t('Administer > Site configuration > Twilio'),  'admin/config/system/twilio'))
   ));
 }
@@ -96,38 +96,36 @@ function twilio_requirements($phase) {
   return $requirements;
 }
 
-/**
- * Create new database table {twilio_twiml}.
- */
-function twilio_update_7000() {
-  // Get the schema array we've defined.
-  $schema = twilio_schema();
-  // Create the table.
-  db_create_table('twilio_twiml', $schema['twilio_twiml']);
-}
 
 /**
- * Add 'country' column to {twilio_user} table
+ * Implements hook_update_N()
+ * for backdrop
  */
-function twilio_update_7001() {
-  $spec = array(
-    'type' => 'varchar',
-    'not null' => TRUE,
-    'length' => 32,
-    'default' => '1',
-  ); 
-  db_add_field( 'twilio_user', 'country', $spec);
+function twilio_update_1000() {
+  // Migrate variables to config.
+  $config = config('twilio.settings');  
+  $config->set('twilio_number', update_variable_get('twilio_number', ""));
+  $config->set('twilio_account', update_variable_get('twilio_account', ""));
+  $config->set('twilio_token', update_variable_get('twilio_token', ""));
+  $config->set('twilio_long_sms', update_variable_get('twilio_long_sms', "1"));
+  $config->set('twilio_registration_form', update_variable_get('twilio_registration_form', "1"));
+  $config->set('twilio_country_codes', update_variable_get('twilio_country_codes', ""));  
+  $config->save();
+
+  // Delete variables.
+  update_variable_del('twilio_number');
+  update_variable_del('twilio_account');
+  update_variable_del('twilio_token');
+  update_variable_del('twilio_long_sms');
+  update_variable_del('twilio_registration_form');
+  update_variable_del('twilio_country_codes');
 }
 
+
 /**
- * Enable the twilio_twiml module if necessary.
+ * Implements hook_update_last_removed().
+ * for backdrop
  */
-function twilio_update_7002() {
-  $result = db_query('SELECT COUNT(*) FROM {twilio_twiml}')->fetchField();
-  if (!empty($result)) {
-    if (module_enable(array('twilio_twiml'))) {
-      return "Enabled the Twilio Twiml module.";
-    }
-  }
-  return "Twilio Twiml module was not enabled.";
+function twilio_update_last_removed() {
+  return 7002;
 }
