@@ -8,7 +8,7 @@
  * Menu callback for adding and confirming a user's mobile number.
  */
 function twilio_user_settings($account) {
-  return drupal_get_form('twilio_user_settings_form', $account);
+  return backdrop_get_form('twilio_user_settings_form', $account);
 }
 
 /**
@@ -37,7 +37,7 @@ function twilio_user_settings_form($form, &$form_state, $account) {
     $form['number'] = array(
       '#type' => 'textfield',
       '#title' => t('Phone number'),
-      '#description' => t('A confirmation code will be sent to via SMS to the number provided'),
+      '#description' => t('A confirmation code will be sent via SMS to the number provided'),
       '#size' => 40,
       '#maxlength' => 255,
       '#required' => TRUE,
@@ -148,7 +148,7 @@ function twilio_user_settings_add_form_submit($form, &$form_state, $account = NU
   $account = twilio_user_send_confirmation($account, $form_state['values']['number'], $form_state['values']['countrycode']);
   $form_state['values']['account'] = $account;
   $form_state['rebuild'] = TRUE;
-  drupal_set_message(t("A confirmation code has been sent to your mobile device"), 'status');
+  backdrop_set_message(t("A confirmation code has been sent to your mobile device"), 'status');
 }
 
 /**
@@ -177,15 +177,14 @@ function twilio_user_settings_confirm_form_submit($form, &$form_state) {
   if ($form_state['clicked_button']['#value'] == t('Delete & start over')) {
     twilio_user_delete($account);
     $account = user_load($form_state['values']['uid'], TRUE);
-    drupal_set_message(t('Your mobile information has been removed'), 'status');
+    backdrop_set_message(t('Your mobile information has been removed'), 'status');
   }
   else {
-    $data = array(
-      'number' => $account->twilio_user['number'],
-      'status' => TWILIO_USER_CONFIRMED,
-    );
-    $account = user_save($account, array('twilio' => $data), 'twilio');
-    drupal_set_message(t('Your mobile number has been confirmed'), 'status');
+   
+     // new hook, only one param. modify $account first
+    $account->twilio_user['status'] = TWILIO_USER_CONFIRMED;             
+    twilio_user_save($account);
+    backdrop_set_message(t('Your mobile number has been confirmed'), 'status');
   }
   $form_state['values']['account'] = $account;
   $form_state['rebuild'] = TRUE;
@@ -207,7 +206,7 @@ function twilio_user_settings_reset_form_submit($form, &$form_state) {
   $account = user_load($form_state['values']['uid']);
   twilio_user_delete($account);
   $account = user_load($form_state['values']['uid'], TRUE);
-  drupal_set_message(t('Your mobile information has been removed'), 'status');
+  backdrop_set_message(t('Your mobile information has been removed'), 'status');
   $form_state['values']['account'] = $account;
   $form_state['rebuild'] = TRUE;
 }

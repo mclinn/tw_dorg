@@ -228,7 +228,8 @@ function twilio_country_codes($all = FALSE) {
   if ($all === TRUE) {
     return $codes;
   }
-  $codes_to_return = array_filter(variable_get('twilio_country_codes', array()));
+  
+  $codes_to_return = array_filter(config_get('twilio.settings', 'twilio_country_codes'));
   if (empty($codes_to_return)) {
     return $codes;
   }

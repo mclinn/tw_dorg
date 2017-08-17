@@ -15,44 +15,49 @@ function twilio_admin_form($form, &$form_state) {
     if (!$library['installed']) {
       $twilio_readme_link = l(t('README.txt'), 'http://drupalcode.org/project/twilio.git/blob/refs/heads/7.x-1.x:/README.txt');
       $twilio_error_text = t('The Twilo library was not detected or installed correctly. Please review the installation instructions provided in the !link file', array('!link' => $twilio_readme_link));
-      drupal_set_message($twilio_error_text, 'error');
+      backdrop_set_message($twilio_error_text, 'error');
     }
   }
+
+
+  // config object for backdrop
+  $config = config('twilio.settings');
 
   $form['twilio_account'] = array(
     '#type' => 'textfield',
     '#required' => TRUE,
-    '#title' => t('Twilio Account SID'),
-    '#default_value' => variable_get('twilio_account'),
+    '#title' => t('Twilio Account SID'),    
+    '#default_value' => $config->get('twilio_account'),
     '#description' => t('Enter your Twilio account id'),
   );
   $form['twilio_token'] = array(
     '#type' => 'textfield',
     '#required' => TRUE,
-    '#title' => t('Twilio Auth Token'),
-    '#default_value' => variable_get('twilio_token'),
+    '#title' => t('Twilio Auth Token'),    
+    '#default_value' => $config->get('twilio_token'),
     '#description' => t('Enter your Twilio token id'),
   );
   $form['twilio_number'] = array(
     '#type' => 'textfield',
     '#required' => TRUE,
-    '#title' => t('Twilio Phone Number'),
-    '#default_value' => variable_get('twilio_number'),
+    '#title' => t('Twilio Phone Number'),    
+    '#default_value' => $config->get('twilio_number'),
+    
     '#description' => t('Enter your Twilio phone number'),
   );
   $form['twilio_long_sms'] = array(
     '#type' => 'radios',
     '#title' => t('Long SMS handling'),
     '#description' => t('How would you like to handle SMS messages longer than 160 characters.'),
-    '#options' => array(t('Send multiple messages'), t('Truncate message to 160 characters')),
-    '#default_value' => variable_get('twilio_long_sms', TWILIO_SMS_LONG_MULTIPLE),
+    '#options' => array(t('Send multiple messages'), t('Truncate message to 160 characters')),   
+    '#default_value' => $config->get('twilio_long_sms'),
   );
   $form['twilio_registration_form'] = array(
     '#type' => 'radios',
     '#title' => t('Show mobile fields during user registration'),
     '#description' => t('Specify if the site should collect mobile information during registration.'),
-    '#options' => array(t('Disabled'), t('Optional'), t('Required')),
-    '#default_value' => variable_get('twilio_registration_form', 0),
+    '#options' => array(t('Disabled'), t('Optional'), t('Required')), 
+    '#default_value' => $config->get('twilio_registration_form'),
   );
 
   $form['twilio_country_codes_container'] = array(
@@ -65,8 +70,8 @@ function twilio_admin_form($form, &$form_state) {
 
   $form['twilio_country_codes_container']['twilio_country_codes'] = array(
     '#type' => 'checkboxes',
-    '#options' => twilio_country_codes(TRUE),
-    '#default_value' => variable_get('twilio_country_codes', array()),
+    '#options' => twilio_country_codes(TRUE),   
+    '#default_value' => $config->get('twilio_country_codes'),
   );
 
   // Expose the callback URLs to the user for convenience.
@@ -92,8 +97,38 @@ function twilio_admin_form($form, &$form_state) {
     '#markup' => '<p>' . $sms_callback . '</p>',
   );
 
-  return system_settings_form($form);
+  //return system_settings_form($form);
+  
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save Twilio Settings'),
+  );
+  
+  
+  return $form;
+  
 }
+
+/**
+ * Backdrop submit for config, replace call to
+ *  system_settings_form()
+ */
+
+function twilio_admin_form_submit($form, &$form_state) {	
+	// new config object
+	$config = config('twilio.settings');
+	$config->set('twilio_number', $form_state['values']['twilio_number']);
+	$config->set('twilio_account', $form_state['values']['twilio_account']);
+	$config->set('twilio_token', $form_state['values']['twilio_token']);
+	$config->set('twilio_long_sms', $form_state['values']['twilio_long_sms']);
+	$config->set('twilio_registration_form', $form_state['values']['twilio_registration_form']);
+	$config->set('twilio_country_codes', $form_state['values']['twilio_country_codes']);
+    
+    $config->save();
+    backdrop_set_message("Config values saved for Twilio settings");
+}
+
+
 
 /**
  * Administrative testing form for SMS.
@@ -153,9 +188,9 @@ function twilio_admin_test_form_submit($form, &$form_state) {
     !empty($form_state['values']['media']) ? $form_state['values']['media'] : NULL
   );
   if ($sent) {
-    drupal_set_message(t('Your message has been sent'));
+    backdrop_set_message(t('Your message has been sent'));
   }
   else {
-    drupal_set_message(t('Unable to send your message.'), 'error');
+    backdrop_set_message(t('Unable to send your message.'), 'error');
   }
 }
