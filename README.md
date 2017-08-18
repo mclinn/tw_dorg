@@ -2,7 +2,7 @@ Twilio
 ======================
 
 The Twilio module provides integration with the Twilio cloud communication
-platform allowing for your Drupal site to integration Voice and SMS
+platform allowing for your Backdrop site to integrate Voice and SMS
 functionality. 
 
 The module currently provides the following functionality:
