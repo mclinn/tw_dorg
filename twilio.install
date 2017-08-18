@@ -19,12 +19,8 @@ function twilio_install() {
  */
 function twilio_uninstall() {
   // Remove all the twilio variables.
-  variable_del('twilio_account');
-  variable_del('twilio_number');
-  variable_del('twilio_path');
-  variable_del('twilio_registration_form');
-  variable_del('twilio_token');
-  variable_del('twilio_area_codes');
+  //  backdrop change, variable table not used
+  
 }
 
 /**
