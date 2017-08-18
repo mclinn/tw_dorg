@@ -25,7 +25,7 @@ Installation
 3. Extract the library in your sites/all/libraries folder and rename the
    directory to 'twilio'.
 4. Visit 'admin/config/system/twilio' and enter your Twilio API information
-   found on the twilio dashboard 
+   found on the twilio dashboard (twilio.com account required)
 
 Documentation
 -------------
