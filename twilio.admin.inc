@@ -9,17 +9,6 @@
  */
 function twilio_admin_form($form, &$form_state) {
 
-  // Detect the Twilio library and provide feedback to the user if not present.
-  if (module_exists('libraries') && function_exists('libraries_detect')) {
-    $library = libraries_detect(TWILIO_LIBRARY);
-    if (!$library['installed']) {
-      $twilio_readme_link = l(t('README.txt'), 'http://drupalcode.org/project/twilio.git/blob/refs/heads/7.x-1.x:/README.txt');
-      $twilio_error_text = t('The Twilo library was not detected or installed correctly. Please review the installation instructions provided in the !link file', array('!link' => $twilio_readme_link));
-      backdrop_set_message($twilio_error_text, 'error');
-    }
-  }
-
-
   // config object for backdrop
   $config = config('twilio.settings');
 

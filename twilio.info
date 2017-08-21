@@ -1,6 +1,8 @@
 name = Twilio
-description = Integration the Twilio cloud communication service with Drupal
+description = Integration of Twilio cloud communication service with Backdrop 
 backdrop = 1.x
-type = module
 package = Twilio
-dependencies[] = libraries
+version = "1.x-1.11"
+type = module
+
+

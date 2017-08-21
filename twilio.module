@@ -26,6 +26,15 @@ module_load_include('inc', 'twilio', 'twilio.codes');
 module_load_include('inc', 'twilio', 'twilio.actions');
 
 /**
+ * Load twilio library files.
+ */
+
+$libpath = backdrop_get_path('module', 'twilio');
+require_once "$libpath/libraries/Services/Twilio.php" ;
+
+
+
+/**
  * Implements hook_menu().
  */
 function twilio_menu() {
@@ -113,24 +122,6 @@ function twilio_edit_access($account) {
   return user_edit_access($account) && user_access('edit own sms number');
 }
 
-/**
- * Implements hook_libraries_info().
- */
-function twilio_libraries_info() {
-  $libraries['twilio'] = array(
-    'name' => 'Twilio library',
-    'vendor url' => 'http://www.twilio.com',
-    'download url' => 'https://github.com/twilio/twilio-php/tarball/latest',
-    'path' => 'Services',
-    'version' => '2010-04-01',
-    'files' => array(
-      'php' => array(
-        'Twilio.php',
-      ),
-    ),
-  );
-  return $libraries;
-}
 
 /**
  * Sends a message via Twilio.
@@ -203,9 +194,6 @@ function twilio_send($number, $message, $country = TWILIO_DEFAULT_COUNTRY_CODE, 
  *   TRUE if the command executed correctly, FALSE otherwise.
  */
 function twilio_command($command = '', $data = array()) {
-
-  // Try to load the library and check if that worked.
-  if (($library = libraries_load(TWILIO_LIBRARY)) && !empty($library['loaded'])) {
     
     // config object for backdrop config system
 	$config = config('twilio.settings');
@@ -298,10 +286,7 @@ function twilio_command($command = '', $data = array()) {
         }
         break;
     }
-  }
-  else {
-    watchdog('Twilio', 'The twilio library was not loaded properly');
-  }
+
   return FALSE;
 }
 
@@ -545,7 +530,7 @@ function twilio_views_api() {
 }
 
 /**
- * Implements hook_config_info().
+ * Implements hook_config_info() for backdrop.
  */
 function twilio_config_info() {
   $prefixes['twilio.settings'] = array(
