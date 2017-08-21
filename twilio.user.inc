@@ -67,8 +67,7 @@ function twilio_user_save($account) {
  if (isset($account->twilio_user['status'])) {
 
     $number = $account->twilio_user;
-    $number->uid = $account->uid;
-   
+     
     $primary_keys = array();
     if (isset($account->twilio_user['status'])) {  
       if ($account->twilio_user['status'] == TWILIO_USER_CONFIRMED) {
