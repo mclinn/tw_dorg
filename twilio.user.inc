@@ -99,7 +99,7 @@ function twilio_user_login(&$edit, $account) {
  * Implements hook_FORMID_form_alter().
  */
 function twilio_form_user_register_form_alter(&$form, &$form_state, $form_id) {
-  if ($twilio_registration_form = variable_get('twilio_registration_form', 0)) {
+   if ($twilio_registration_form = config_get('twilio.settings', 'twilio_registration_form')) {
     if ($twilio_registration_form == 2) {
       $required = TRUE;
     }
