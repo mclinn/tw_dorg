@@ -37,16 +37,18 @@ function twilio_user_load($users) {
 
 /**
  * Implements hook_user_insert().
+ * backdrop hooks changed, remove parms
  */
-function twilio_user_insert(&$edit, $account, $category) {
-  twilio_user_save($edit, $account, $category);
+function twilio_user_insert($account) {
+  twilio_user_save($account);
 }
 
 /**
  * Implements hook_user_update().
+ * backdrop hooks changed, remove parms
  */
-function twilio_user_update(&$edit, $account, $category) {
-  twilio_user_save($edit, $account, $category);
+function twilio_user_update($account) {
+  twilio_user_save($account);
 }
 
 /**

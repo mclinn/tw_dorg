@@ -4,19 +4,6 @@
  * Twilio Actions.
  */
 
-/**
- * Implements hook_action_info().
- */
-function twilio_action_info() {
-  return array(
-    'twilio_send_sms_to_user_action' => array(
-      'type' => 'user',
-      'label' => t('Send SMS to user'),
-      'configurable' => TRUE,
-      'triggers' => array('any'),
-    ),
-  );
-}
 
 /**
  * Callback function for sending sms to user action.
